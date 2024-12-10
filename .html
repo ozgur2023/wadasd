@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personal Assistant</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;700&display=swap');
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+            background: #121212;
+            color: #f5f5f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+        .container {
+            width: 90%;
+            max-width: 800px;
+            background: #1e1e1e;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+            transition: max-height 0.5s ease-in-out, padding 0.5s;
+            max-height: 80px;
+            padding: 10px;
+        }
+        .container.open {
+            max-height: 1500px;
+            padding: 20px;
+        }
+        .header {
+            text-align: center;
+            font-size: 1.5em;
+            font-weight: 700;
+            color: #ffd700;
+            cursor: pointer;
+            user-select: none;
+            padding: 10px;
+        }
+        .section {
+            margin: 20px 0;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+        .container.open .section {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        textarea {
+            width: 100%;
+            height: 100px;
+            margin-top: 10px;
+            padding: 10px;
+            font-size: 1em;
+            background: #2c2c2c;
+            border: none;
+            border-radius: 8px;
+            color: #fff;
+            resize: none;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        textarea:focus {
+            outline: none;
+            background: #3b3b3b;
+        }
+        .shortcuts {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 10px;
+        }
+        .shortcuts a {
+            text-decoration: none;
+            color: #121212;
+            background-color: #ffd700;
+            padding: 10px 15px;
+            border-radius: 5px;
+            font-weight: bold;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+        }
+        .shortcuts a:hover {
+            background-color: #e6c200;
+            transform: scale(1.1);
+        }
+        .time-display, .alarm-section input, .alarm-section button {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #ffd700;
+        }
+        .alarm-section input {
+            padding: 10px;
+            margin-right: 10px;
+            border: none;
+            border-radius: 5px;
+            background: #2c2c2c;
+            color: #fff;
+        }
+        .alarm-section button {
+            padding: 10px 15px;
+            background: #2c2c2c;
+            border: 1px solid #ffd700;
+            border-radius: 5px;
+            cursor: pointer;
+            color: #ffd700;
+            transition: all 0.3s ease;
+        }
+        .alarm-section button:hover {
+            background: #ffd700;
+            color: #121212;
+            transform: scale(1.1);
+        }
+        .motivational-quote {
+            text-align: center;
+            font-size: 1.2em;
+            font-style: italic;
+            margin: 20px 0;
+            color: #ffd700;
+        }
+        .weather-display {
+            text-align: center;
+            font-size: 1.2em;
+            margin: 20px 0;
+            color: #e6e6e6;
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="assistantContainer">
+        <div class="header" onclick="toggleContainer()">Personal Assistant</div>
+        <div class="section note-section">
+            <h2>Take Notes</h2>
+            <textarea placeholder="Write your notes here..."></textarea>
+        </div>
+        <div class="section motivational-quote">
+            <h2>Motivational Quote</h2>
+            <p id="quote">"The future depends on what you do today." - Mahatma Gandhi</p>
+        </div>
+        <div class="section shortcut-section">
+            <h2>Quick Shortcuts</h2>
+            <div class="shortcuts">
+                <a href="https://www.instagram.com" target="_blank">Instagram</a>
+                <a href="https://www.youtube.com" target="_blank">YouTube</a>
+                <a href="https://www.google.com" target="_blank">Google</a>
+            </div>
+        </div>
+        <div class="section time-section">
+            <h2>Current Time</h2>
+            <div class="time-display" id="time"></div>
+        </div>
+        <div class="section alarm-section">
+            <h2>Set an Alarm</h2>
+            <input type="time" id="alarmTime">
+            <button onclick="setAlarm()">Set Alarm</button>
+            <div id="alarmMessage" style="margin-top: 10px;"></div>
+        </div>
+    </div>
+    <script>
+        function toggleContainer() {
+            const container = document.getElementById('assistantContainer');
+            container.classList.toggle('open');
+        }
+
+        function updateTime() {
+            const timeElement = document.getElementById('time');
+            const now = new Date();
+            timeElement.textContent = now.toLocaleTimeString();
+        }
+        setInterval(updateTime, 1000);
+        updateTime();
+
+        let alarmTime = null;
+        function setAlarm() {
+            const inputTime = document.getElementById('alarmTime').value;
+            if (inputTime) {
+                alarmTime = inputTime;
+                document.getElementById('alarmMessage').textContent = `Alarm set for ${inputTime}`;
+            } else {
+                document.getElementById('alarmMessage').textContent = 'Please select a valid time!';
+            }
+        }
+        setInterval(() => {
+            if (alarmTime) {
+                const now = new Date();
+                const currentTime = now.toTimeString().slice(0, 5);
+                if (currentTime === alarmTime) {
+                    alert('⏰ Alarm Ringing!');
+                    alarmTime = null;
+                }
+            }
+        }, 1000);
+    </script>
+</body>
+</html>
